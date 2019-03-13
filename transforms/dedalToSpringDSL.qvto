@@ -1,4 +1,4 @@
-transformation dedalToSpringDSL();
+transformation dedalToSpringDSL(in dedal : DedalModel, out springdsl : SpringConfigDSL);
 
 main() {
 
