@@ -5,11 +5,16 @@ modeltype DedalModel "strict" uses dedal('http://www.dedal.fr/metamodel');
 
 main() {
 
-	dedal.rootObjects()[DedalModel] ->map toSpringModel();
+	dedal.rootObjects()[dedal::DedalDiagram] ->map toSpringModel();
 
 }
 
+
 mapping SpringModel::SpringProject::toSpringModel() : dedal::DedalDiagram {
 	
+
+mapping DedalModel::DedalDiagram::toSpringModel() : SpringModel::SpringProject {
+	name := "Generated Diagram";
+
 	architectureDescriptions := self.configurations.getArchitectureDescriptions();
 }
