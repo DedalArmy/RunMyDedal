@@ -1,5 +1,15 @@
-transformation dedalToSpringDSL(in dedal : DedalModel, out springdsl : SpringConfigDSL);
+transformation dedalToSpringDSL(in dedal : DedalModel, out springdsl : SpringModel);
+
+modeltype SpringModel "strict" uses springConfigDsl('http://www.xtext.org/spring/SpringConfigDsl');
+modeltype DedalModel "strict" uses dedal('http://www.dedal.fr/metamodel');
 
 main() {
 
+	dedal.rootObjects()[DedalModel] ->map toSpringModel();
+
+}
+
+mapping SpringModel::SpringProject::toSpringModel() : dedal::DedalDiagram {
+	name := "Generated Diagram";
+	architectureDescriptions := self.configurations.getArchitectureDescriptions();
 }
