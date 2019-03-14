@@ -10,6 +10,6 @@ main() {
 }
 
 mapping SpringModel::SpringProject::toSpringModel() : dedal::DedalDiagram {
-	name := "Generated Diagram";
+	
 	architectureDescriptions := self.configurations.getArchitectureDescriptions();
 }
