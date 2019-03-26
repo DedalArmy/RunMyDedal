@@ -9,12 +9,33 @@ main() {
 
 }
 
-
-mapping SpringModel::SpringProject::toSpringModel() : dedal::DedalDiagram {
-	
-
 mapping DedalModel::DedalDiagram::toSpringModel() : SpringModel::SpringProject {
-	name := "Generated Diagram";
-
-	architectureDescriptions := self.configurations.getArchitectureDescriptions();
+	configurations := self.architectureDescriptions.getConfigurations();
+	
 }
+
+mapping DedalModel::ArchitectureDescription::toSpringConfiguration() : SpringModel::Configuration
+		 {
+
+}
+
+mapping DedalModel::Assembly::toSpringConfiguration() : SpringModel::Configuration {
+	components := self.assmComponents-> map toSpringComp();
+	
+}
+
+mapping DedalModel::CompInstance::toSpringComp() : SpringModel::Component {
+	name := self.name;
+	if(self.instantiates.oclIsTypeOf(DedalModel::CompClass)){
+		_class._class.oclAsType(SpringModel::Class).classname := self.instantiates.name;
+	}
+}
+//on recupere les configurations du spring project grace au truc dedal il 
+query DedalModel::ArchitectureDescription::getConfigurations() : OrderedSet(SpringModel::Configuration) {
+	var configurations : OrderedSet(SpringModel::Configuration);
+	if(self.oclAsType(DedalModel::Assembly)){
+		configurations += self.map toSpringConfiguration();	
+	};
+	return configurations;
+}
+
