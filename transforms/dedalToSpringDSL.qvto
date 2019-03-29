@@ -10,13 +10,8 @@ main() {
 }
 
 mapping DedalModel::DedalDiagram::toSpringModel() : SpringModel::SpringProject {
-	configurations := self.architectureDescriptions.getConfigurations();
+	configurations += self.architectureDescriptions->getConfiguration();
 	
-}
-
-mapping DedalModel::ArchitectureDescription::toSpringConfiguration() : SpringModel::Configuration
-		 {
-
 }
 
 mapping DedalModel::Assembly::toSpringConfiguration() : SpringModel::Configuration {
@@ -27,15 +22,22 @@ mapping DedalModel::Assembly::toSpringConfiguration() : SpringModel::Configurati
 mapping DedalModel::CompInstance::toSpringComp() : SpringModel::Component {
 	name := self.name;
 	if(self.instantiates.oclIsTypeOf(DedalModel::CompClass)){
-		_class._class.oclAsType(SpringModel::Class).classname := self.instantiates.name;
+		_class := self.map toCreationMethod();
 	}
 }
-//on recupere les configurations du spring project grace au truc dedal il 
-query DedalModel::ArchitectureDescription::getConfigurations() : OrderedSet(SpringModel::Configuration) {
-	var configurations : OrderedSet(SpringModel::Configuration);
-	if(self.oclAsType(DedalModel::Assembly)){
-		configurations += self.map toSpringConfiguration();	
-	};
-	return configurations;
+
+mapping DedalModel::CompInstance::toCreationMethod() : springConfigDsl::CreationMethod {
+	_class := self.map toClass();
 }
 
+mapping DedalModel::CompInstance::toClass() : springConfigDsl::Class {
+	classname := self.instantiates.name;
+}
+//on recupere les configurations du spring project grace au truc dedal il 
+query DedalModel::ArchitectureDescription::getConfiguration() : SpringModel::Configuration {
+	var config : SpringModel::Configuration;
+	if(self.oclIsTypeOf(DedalModel::Assembly)){
+		config := self.oclAsType(DedalModel::Assembly).map toSpringConfiguration();	
+	};
+	return config;
+}
