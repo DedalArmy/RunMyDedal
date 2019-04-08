@@ -15,12 +15,13 @@ mapping DedalModel::DedalDiagram::toSpringModel() : SpringModel::SpringProject {
 }
 
 mapping DedalModel::Assembly::toSpringConfiguration() : SpringModel::Configuration {
-	components := self.assmComponents-> map toSpringComp();
+	components := self.assmComponents-> map toSpringComp(self);
 	
 }
 
-mapping DedalModel::CompInstance::toSpringComp() : SpringModel::Component {
+mapping DedalModel::CompInstance::toSpringComp(assm:DedalModel::Assembly) : SpringModel::Component {
 	name := self.name;
+	features +=assm.assemblyConnections->map toSpringFeature();
 	if(self.instantiates.oclIsTypeOf(DedalModel::CompClass)){
 		_class := self.map toCreationMethod();
 	}
@@ -33,6 +34,15 @@ mapping DedalModel::CompInstance::toCreationMethod() : springConfigDsl::Creation
 mapping DedalModel::CompInstance::toClass() : springConfigDsl::Class {
 	classname := self.instantiates.name;
 }
+
+mapping DedalModel::InstConnection::toSpringFeature() : springConfigDsl::Feature {
+	self.serverInstElem->forEach(f){
+		if(f.oclIsTypeOf(DedalModel::CompInstance)){
+			name:="\""+self._property.substituteAll("orchestrator1.","")+"\"";
+		}
+	}
+}
+
 //on recupere les configurations du spring project grace au truc dedal il 
 query DedalModel::ArchitectureDescription::getConfiguration() : SpringModel::Configuration {
 	var config : SpringModel::Configuration;
