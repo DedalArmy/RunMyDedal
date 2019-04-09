@@ -1,1 +1,15 @@
-<?xml version = "" encoding = "" ?> <beans > <bean id= "lampDesk" class= "fr.ema.examples.has.config.AdjustableLamp" /> <bean id= "lampSitting" class= "fr.ema.examples.has.config.AdjustableLamp" /> <bean id= "aClock1" class= "fr.ema.examples.has.config.AlarmClock" /> <bean id= "securityManager1" class= "fr.ema.examples.has.config.SecurityManager" /> <bean id= "orchestrator1" class= "fr.ema.examples.has.config.HomeOrchestrator" /> </beans>
+<?xml version = "" encoding = "" ?> 
+<beans > 
+	<bean id= "lampDesk" class= "fr.ema.examples.has.config.AdjustableLamp" /> 
+	<bean id= "lampSitting" class= "fr.ema.examples.has.config.AdjustableLamp" /> 
+	<bean id= "aClock1" class= "fr.ema.examples.has.config.AlarmClock" /> 
+	<bean id= "securityManager1" class= "fr.ema.examples.has.config.SecurityManager" > 
+		<property name= "alarm" ref= "aClock1" /> 
+	</bean> 
+	<bean id= "orchestrator1" class= "fr.ema.examples.has.config.HomeOrchestrator" > 
+		<property name= "arrayOfLights" ref= "lampDesk" /> 
+		<property name= "arrayOfLights" ref= "lampSitting" /> 
+		<property name= "clock" ref= "aClock1" /> 
+		<property name= "securityManager" ref= "securityManager1" /> 
+	</bean> 
+</beans>

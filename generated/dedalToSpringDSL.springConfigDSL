@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<springConfigDsl:SpringProject xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:springConfigDsl="http://www.xtext.org/spring/SpringConfigDsl">
+  <configurations>
+    <components name="&quot;lampDesk&quot;">
+      <class>
+        <class xsi:type="springConfigDsl:Class" classname="&quot;fr.ema.examples.has.config.AdjustableLamp&quot;"/>
+      </class>
+    </components>
+    <components name="&quot;lampSitting&quot;">
+      <class>
+        <class xsi:type="springConfigDsl:Class" classname="&quot;fr.ema.examples.has.config.AdjustableLamp&quot;"/>
+      </class>
+    </components>
+    <components name="&quot;aClock1&quot;">
+      <class>
+        <class xsi:type="springConfigDsl:Class" classname="&quot;fr.ema.examples.has.config.AlarmClock&quot;"/>
+      </class>
+    </components>
+    <components name="&quot;securityManager1&quot;">
+      <class>
+        <class xsi:type="springConfigDsl:Class" classname="&quot;fr.ema.examples.has.config.SecurityManager&quot;"/>
+      </class>
+    </components>
+    <components name="&quot;orchestrator1&quot;">
+      <class>
+        <class xsi:type="springConfigDsl:Class" classname="&quot;fr.ema.examples.has.config.HomeOrchestrator&quot;"/>
+      </class>
+      <features name="&quot;alarm&quot;">
+        <artefact xsi:type="springConfigDsl:Reference" ref="//@configurations.0/@components.2"/>
+      </features>
+      <features name="&quot;arrayOfLights&quot;">
+        <artefact xsi:type="springConfigDsl:Reference" ref="//@configurations.0/@components.0"/>
+      </features>
+      <features name="&quot;arrayOfLights&quot;">
+        <artefact xsi:type="springConfigDsl:Reference" ref="//@configurations.0/@components.1"/>
+      </features>
+      <features name="&quot;clock&quot;">
+        <artefact xsi:type="springConfigDsl:Reference" ref="//@configurations.0/@components.2"/>
+      </features>
+      <features name="&quot;securityManager&quot;">
+        <artefact xsi:type="springConfigDsl:Reference" ref="//@configurations.0/@components.3"/>
+      </features>
+    </components>
+  </configurations>
+</springConfigDsl:SpringProject>

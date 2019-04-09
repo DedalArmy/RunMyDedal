@@ -21,7 +21,11 @@ mapping DedalModel::Assembly::toSpringConfiguration() : SpringModel::Configurati
 
 query setReferences(components:OrderedSet(SpringModel::Component),connections:OrderedSet(DedalModel::InstConnection)) : Void {
 	components->forEach(c) {
-		c.features+=connections->map toSpringFeature();
+		connections->forEach(connection) {
+			if(connection.clientInstElem.name = c.name) {
+				c.features+=connection.map toSpringFeature(c);
+			}
+		}
 	};
 	return null;
 }
@@ -42,22 +46,13 @@ mapping DedalModel::CompInstance::toClass() : springConfigDsl::Class {
 	classname := self.instantiates.name;
 }
 
-mapping DedalModel::InstConnection::toSpringFeature() : springConfigDsl::Feature {
-	self.serverInstElem->forEach(f){
-		if(f.oclIsTypeOf(DedalModel::CompInstance)){
-//			name:="\""+self._property.substituteAll("orchestrator1.","")+"\"";
-			name := "\""+self._property.substring(self._property.lastIndexOf('.')+1, self._property.length())+"\"";
-			var arte := resolveone(comp:SpringModel::Component | comp.name = f.name);
-			artefact:= arte.clone();
-			//config.getComponent(f.name);
-		}
-	}
+mapping DedalModel::InstConnection::toSpringFeature(component:SpringModel::Component) : springConfigDsl::Feature {
+	name := "\""+self._property.substring(self._property.lastIndexOf('.')+1, self._property.length())+"\"";
+	artefact:= self.map toReference();
 }
 
-
-
-mapping DedalModel::CompInstance::toSpringReference() : springConfigDsl::AbstractArtefact{
-	
+mapping DedalModel::InstConnection::toReference() : SpringModel::Reference {
+	ref :=late resolveone(comp:SpringModel::Component | comp.name = self.serverInstElem.name);
 }
 
 query SpringModel::Configuration::getComponent(name:String): SpringModel::Component {
