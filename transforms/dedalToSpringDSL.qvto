@@ -23,16 +23,41 @@ query setReferences(components:OrderedSet(SpringModel::Component),connections:Or
 	components->forEach(c) {
 		connections->forEach(connection) {
 			if(connection.clientInstElem.name = c.name) {
-				c.features+=connection.map toSpringFeature(c);
+				c.features+=connection.getSpringFeature(c);
+				//map toSpringFeature(c);
 			}
 		}
 	};
 	return null;
 }
 
+query DedalModel::InstConnection::getSpringFeature(comp:SpringModel::Component): SpringModel::Feature{
+	var feat : SpringModel::Feature;
+	var found : Boolean;
+	found := false;
+	comp.features->forEach(f){
+		if(f.name="\""+self._property.substring(self._property.lastIndexOf('.')+1, self._property.length())+"\""){
+				found := true;
+				feat := f;
+				//feat.artefact:=self.map toReference(); //TODO vérifier set/list..., récupérer artefacts depuis artefac.oclAsType(SET/LIST)...
+														// Ajouter la ref à artefacts
+				if(feat.artefact.oclIsTypeOf(SpringModel::sSet)){
+				feat.artefact.oclAsType(SpringModel::sSet).artefacts += self.map toReference();
+				}else if(feat.artefact.oclIsTypeOf(SpringModel::sList)){
+					feat.artefact.oclAsType(SpringModel::sList).artefacts += self.map toReference();
+				}
+		}
+	};
+	if(not found){
+		feat:=self.map toSpringFeature();
+	};
+	return feat;
+	
+}
+
+
 mapping DedalModel::CompInstance::toSpringComp(assm:DedalModel::Assembly) : SpringModel::Component {
 	name := self.name;
-//	features +=assm.assemblyConnections->map toSpringFeature();
 	if(self.instantiates.oclIsTypeOf(DedalModel::CompClass)){
 		_class := self.map toCreationMethod();
 	}
@@ -46,25 +71,31 @@ mapping DedalModel::CompInstance::toClass() : springConfigDsl::Class {
 	classname := self.instantiates.name;
 }
 
-mapping DedalModel::InstConnection::toSpringFeature(component:SpringModel::Component) : springConfigDsl::Feature {
+mapping DedalModel::InstConnection::toSpringFeature() : springConfigDsl::Feature {
 	name := "\""+self._property.substring(self._property.lastIndexOf('.')+1, self._property.length())+"\"";
-	artefact:= self.map toReference();
+
+	if(self._property.startsWith("set:")){
+			artefact:= self.map toSet();
+	}
+	else if(self._property.startsWith("list:")){
+			artefact:= self.map toList();
+	}
+	else{
+		artefact:= self.map toReference();
+	}
+}
+
+mapping DedalModel::InstConnection::toSet():SpringModel::sSet{
+	artefacts+= self.map toReference();
+}
+
+mapping DedalModel::InstConnection::toList():SpringModel::sList{
+	artefacts:= self.map toReference();
 }
 
 mapping DedalModel::InstConnection::toReference() : SpringModel::Reference {
 	ref :=late resolveone(comp:SpringModel::Component | comp.name = self.serverInstElem.name);
 }
-
-query SpringModel::Configuration::getComponent(name:String): SpringModel::Component {
-	var comp : SpringModel::Component;
-	self.components->forEach(c){
-	if(name=c.name){
-		comp := c;
-		};
-	};
-	return comp;
-}
-
 
 //on recupere les configurations du spring project grace au truc dedal il 
 query DedalModel::ArchitectureDescription::getConfiguration() : SpringModel::Configuration {
