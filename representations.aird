@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<viewpoint:DAnalysis xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" uid="_Cs17oGKCEemx79n_GH8l1Q" version="14.1.0.201810161215">
+  <semanticResources>generated/dedalToSpringDSL.sdsl</semanticResources>
+  <semanticResources>generated/dedalToSpringDSL.springConfigDSL</semanticResources>
+  <semanticResources>models/HAS.v2.sdsl_genDedalDiag.dedal</semanticResources>
+  <semanticResources>transforms/dedalToSpringDSL.qvto</semanticResources>
+  <semanticResources>transforms/springToDedal.qvto</semanticResources>
+  <semanticResources>http://www.dedal.fr/metamodel</semanticResources>
+  <semanticResources>platform:/resource/testSpring/springToDedal.ecore</semanticResources>
+  <semanticResources>platform:/resource/testSpring/springToDedal2.ecore</semanticResources>
+  <semanticResources>http://www.eclipse.org/emf/2002/Ecore</semanticResources>
+  <semanticResources>bundleentry://880.fwk482614135/cache/www.w3.org/2001/XMLSchema-instance.xsd</semanticResources>
+</viewpoint:DAnalysis>
