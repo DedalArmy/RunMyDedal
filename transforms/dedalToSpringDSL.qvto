@@ -19,43 +19,6 @@ mapping DedalModel::Assembly::toSpringConfiguration() : SpringModel::Configurati
 	setReferences(components, self.assemblyConnections);
 }
 
-query setReferences(components:OrderedSet(SpringModel::Component),connections:OrderedSet(DedalModel::InstConnection)) : Void {
-	components->forEach(c) {
-		connections->forEach(connection) {
-			if(connection.clientInstElem.name = c.name) {
-				c.features+=connection.getSpringFeature(c);
-				//map toSpringFeature(c);
-			}
-		}
-	};
-	return null;
-}
-
-query DedalModel::InstConnection::getSpringFeature(comp:SpringModel::Component): SpringModel::Feature{
-	var feat : SpringModel::Feature;
-	var found : Boolean;
-	found := false;
-	comp.features->forEach(f){
-		if(f.name="\""+self._property.substring(self._property.lastIndexOf('.')+1, self._property.length())+"\""){
-				found := true;
-				feat := f;
-				//feat.artefact:=self.map toReference(); //TODO vérifier set/list..., récupérer artefacts depuis artefac.oclAsType(SET/LIST)...
-														// Ajouter la ref à artefacts
-				if(feat.artefact.oclIsTypeOf(SpringModel::sSet)){
-				feat.artefact.oclAsType(SpringModel::sSet).artefacts += self.map toReference();
-				}else if(feat.artefact.oclIsTypeOf(SpringModel::sList)){
-					feat.artefact.oclAsType(SpringModel::sList).artefacts += self.map toReference();
-				}
-		}
-	};
-	if(not found){
-		feat:=self.map toSpringFeature();
-	};
-	return feat;
-	
-}
-
-
 mapping DedalModel::CompInstance::toSpringComp(assm:DedalModel::Assembly) : SpringModel::Component {
 	name := self.name;
 	if(self.instantiates.oclIsTypeOf(DedalModel::CompClass)){
@@ -104,4 +67,39 @@ query DedalModel::ArchitectureDescription::getConfiguration() : SpringModel::Con
 		config := self.oclAsType(DedalModel::Assembly).map toSpringConfiguration();	
 	};
 	return config;
+}
+
+query DedalModel::InstConnection::getSpringFeature(comp:SpringModel::Component): SpringModel::Feature{
+	var feat : SpringModel::Feature;
+	var found : Boolean;
+	found := false;
+	comp.features->forEach(f){
+		if(f.name="\""+self._property.substring(self._property.lastIndexOf('.')+1, self._property.length())+"\""){
+				found := true;
+				feat := f;
+				//feat.artefact:=self.map toReference(); //TODO vérifier set/list..., récupérer artefacts depuis artefac.oclAsType(SET/LIST)...
+														// Ajouter la ref à artefacts
+				if(feat.artefact.oclIsTypeOf(SpringModel::sSet)){
+					feat.artefact.oclAsType(SpringModel::sSet).artefacts += self.map toReference();
+				}else if(feat.artefact.oclIsTypeOf(SpringModel::sList)){
+					feat.artefact.oclAsType(SpringModel::sList).artefacts += self.map toReference();
+				}
+		}
+	};
+	if(not found){
+		feat:=self.map toSpringFeature();
+	};
+	return feat;
+	
+}
+
+query setReferences(components:OrderedSet(SpringModel::Component),connections:OrderedSet(DedalModel::InstConnection)) : Void {
+	components->forEach(c) {
+		connections->forEach(connection) {
+			if(connection.clientInstElem.name = c.name) {
+				c.features+=connection.getSpringFeature(c);
+			}
+		}
+	};
+	return null;
 }
